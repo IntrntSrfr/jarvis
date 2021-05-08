@@ -45,3 +45,30 @@ func TestVecAdd(t *testing.T) {
 		t.Errorf("VecEqual(v1, v2) = %v; want true", false)
 	}
 }
+
+func TestVecScale(t *testing.T) {
+	v1 := Vector{1, 2, 3}
+	scale := 2
+
+	got := VecScale(v1, scale)
+	expected := Vector{2, 4, 6}
+
+	if !VecEqual(got, expected) {
+		t.Errorf("VecScale(v1, scale) = %v; want %v", got, expected)
+	}
+}
+
+func TestVecMap(t *testing.T) {
+	v1 := Vector{1, 2, 3}
+
+	f := func(i int) int {
+		return i + 3
+	}
+
+	got := VecMap(v1, f)
+	expected := Vector{4, 5, 6}
+
+	if !VecEqual(got, expected) {
+		t.Errorf("VecMap(v1, f) = %v; want %v", got, expected)
+	}
+}
