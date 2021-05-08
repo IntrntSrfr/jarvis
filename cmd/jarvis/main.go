@@ -13,16 +13,18 @@ func init() {
 
 func main() {
 
+	// make a list of points
 	points := make([]jarvis.Point, 100)
 	for i := 0; i < len(points); i++ {
 		points[i] = jarvis.NewPoint()
 	}
-	fmt.Println(points)
 
+	// make a perceptron of size 2 and learning rate of 0.1
 	p := jarvis.NewPerceptron(2, 0.1)
 	fmt.Println(p)
 
-	for i := 0; i < 1; i++ {
+	// train for each point in list 10 times
+	for i := 0; i < 10; i++ {
 		for _, point := range points {
 			input := jarvis.Vector{point.X, point.Y}
 			p.Train(input, point.Label)
