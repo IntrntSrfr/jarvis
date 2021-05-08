@@ -5,7 +5,8 @@ import "math/rand"
 // Vector represents a euclidean vector
 type Vector []float64
 
-// NewRandomVector creates a vector of a specified size with random values for every entry in the vector
+// NewRandomVector creates a vector of a specified size with random values
+// between -1 and 1 for every entry in the vector
 func NewRandomVector(size int) Vector {
 	res := make(Vector, size)
 	for i := 0; i < len(res); i++ {
