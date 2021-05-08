@@ -1,6 +1,16 @@
 package jarvis
 
+import "math/rand"
+
 type Vector []float64
+
+func NewRandomVector(size int) Vector {
+	res := make(Vector, size)
+	for i := 0; i < len(res); i++ {
+		res[i] = rand.Float64()*(1+1) - 1
+	}
+	return res
+}
 
 func VecAdd(v1 Vector, v2 Vector) Vector {
 	if len(v1) != len(v2) {
