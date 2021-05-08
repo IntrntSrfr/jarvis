@@ -1,6 +1,6 @@
 package jarvis
 
-type Vector []int
+type Vector []float64
 
 func VecAdd(v1 Vector, v2 Vector) Vector {
 	if len(v1) != len(v2) {
@@ -28,7 +28,15 @@ func VecEqual(v1 Vector, v2 Vector) bool {
 
 }
 
-func VecScale(v1 Vector, scale int) Vector {
+func VecSum(v1 Vector) float64 {
+	sum := 0.0
+	for i := 0; i < len(v1); i++ {
+		sum += v1[i]
+	}
+	return sum
+}
+
+func VecScale(v1 Vector, scale float64) Vector {
 	res := make(Vector, len(v1))
 	for i := 0; i < len(v1); i++ {
 		res[i] = v1[i] * scale
@@ -36,18 +44,18 @@ func VecScale(v1 Vector, scale int) Vector {
 	return res
 }
 
-func VecDot(v1 Vector, v2 Vector) int {
+func VecDot(v1 Vector, v2 Vector) float64 {
 	if len(v1) != len(v2) {
 		panic("vector lenghts do not match")
 	}
-	sum := 0
+	sum := 0.0
 	for i := 0; i < len(v1); i++ {
 		sum += v1[i] * v2[i]
 	}
 	return sum
 }
 
-func VecMap(v1 Vector, f func(int) int) Vector {
+func VecMap(v1 Vector, f func(float64) float64) Vector {
 	res := make(Vector, len(v1))
 	for i := 0; i < len(v1); i++ {
 		res[i] = f(v1[i])

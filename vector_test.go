@@ -9,7 +9,7 @@ func TestVecDot(t *testing.T) {
 	got := VecDot(v1, v2)
 
 	if got != 38 {
-		t.Errorf("VecDot(v1, v2) = %d; want 38", got)
+		t.Errorf("VecDot(v1, v2) = %v; want 38", got)
 	}
 }
 func TestVecDotDifferentLengths(t *testing.T) {
@@ -48,7 +48,7 @@ func TestVecAdd(t *testing.T) {
 
 func TestVecScale(t *testing.T) {
 	v1 := Vector{1, 2, 3}
-	scale := 2
+	scale := 2.0
 
 	got := VecScale(v1, scale)
 	expected := Vector{2, 4, 6}
@@ -61,7 +61,7 @@ func TestVecScale(t *testing.T) {
 func TestVecMap(t *testing.T) {
 	v1 := Vector{1, 2, 3}
 
-	f := func(i int) int {
+	f := func(i float64) float64 {
 		return i + 3
 	}
 
