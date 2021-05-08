@@ -24,11 +24,20 @@ func main() {
 	fmt.Println(p)
 
 	// train for each point in list 10 times
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 1000; i++ {
 		for _, point := range points {
 			input := jarvis.Vector{point.X, point.Y}
 			p.Train(input, point.Label)
 		}
 	}
+
+	for _, point := range points {
+		inp := jarvis.Vector{point.X, point.Y}
+		if p.Guess(inp) != point.Label {
+			fmt.Println("FAILED GUESS FOR", point)
+		}
+	}
+
 	fmt.Println(p)
+
 }
