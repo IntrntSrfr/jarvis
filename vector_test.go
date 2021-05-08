@@ -42,7 +42,7 @@ func TestVecAdd(t *testing.T) {
 	expected := Vector{2, 4, 6}
 
 	if !VecEqual(got, expected) {
-		t.Errorf("VecEqual(v1, v2) = %v; want true", false)
+		t.Errorf("Add(v1, v2) = %v; want %v", got, expected)
 	}
 }
 
