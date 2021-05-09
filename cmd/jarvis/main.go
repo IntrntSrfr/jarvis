@@ -14,7 +14,7 @@ func init() {
 func main() {
 
 	// make a list of points
-	points := make([]jarvis.Point, 100)
+	points := make([]jarvis.Point, 10000)
 	for i := 0; i < len(points); i++ {
 		points[i] = jarvis.NewPoint()
 	}
@@ -23,17 +23,27 @@ func main() {
 	p := jarvis.NewPerceptron(2, 0.1)
 	fmt.Println(p)
 
-	// train for each point in list 10 times
-	for i := 0; i < 1000; i++ {
+	epochs := 0
+	for {
+		failed := false
 		for _, point := range points {
-			input := jarvis.Vector{point.X, point.Y}
-			p.Train(input, point.Label)
+			input := jarvis.Vector{1, point.X, point.Y}
+			lol := p.Train(input, point.Label)
+			if lol != point.Label {
+				failed = true
+			}
 		}
+		if !failed {
+			break
+		}
+		epochs++
 	}
 
+	fmt.Println(epochs)
+
 	for _, point := range points {
-		inp := jarvis.Vector{point.X, point.Y}
-		if p.Guess(inp) != point.Label {
+		inp := jarvis.Vector{1, point.X, point.Y}
+		if p.Guess(inp, jarvis.ReLU) != point.Label {
 			fmt.Println("FAILED GUESS FOR", point)
 		}
 	}

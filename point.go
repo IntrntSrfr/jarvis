@@ -10,11 +10,11 @@ type Point struct {
 
 func NewPoint() Point {
 	p := Point{
-		X: rand.Float64() * 100,
-		Y: rand.Float64() * 100,
+		X: rand.Float64() * 10,
+		Y: rand.Float64() * 10,
 	}
-	//if -0.5*p.X+70 >= p.Y {
-	if p.X >= p.Y {
+	if 0.431*p.X+3 >= p.Y {
+		//if p.X >= p.Y {
 		p.Label = 1
 	} else {
 		p.Label = -1
