@@ -1,6 +1,6 @@
 package jarvis
 
-type Matrix [][]int
+type Matrix []Vector
 
 func MatrixDot(m1 Matrix, m2 Matrix) {
 

@@ -1,6 +1,9 @@
 package jarvis
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 type Perceptron struct {
 	Weights Vector
@@ -33,6 +36,20 @@ func (p *Perceptron) Train(inp Vector, target int) int {
 }
 
 type ActivationFunction func(x float64) float64
+
+// The HeavisideStep function is a step function that returns x if x >= 0, and 0 otherwise
+var HeavisideStep = func(x float64) float64 {
+	if x >= 0 {
+		return 1
+	}
+	return 0
+}
+
+// The Sigmoid function returns an output clamped between 0 and 1, 0 if the number is very negative and
+// 1 if the number is very positive.
+var Sigmoid = func(x float64) float64 {
+	return 1 / (1 + math.Exp(-x))
+}
 
 // ReLU is the Rectified Linear Unit formula, which returns x when x >= 0 and 0 if its less than 0
 var ReLU = func(x float64) float64 {

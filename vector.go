@@ -78,3 +78,11 @@ func VecMap(v1 Vector, f func(float64) float64) Vector {
 	}
 	return res
 }
+
+func VecTranspose(v1 Vector) []Vector {
+	res := make([]Vector, len(v1))
+	for i := range res {
+		res[i] = Vector{v1[i]}
+	}
+	return res
+}
