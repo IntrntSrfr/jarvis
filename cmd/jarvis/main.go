@@ -14,7 +14,7 @@ func init() {
 func main() {
 
 	// make a list of points
-	points := make([]jarvis.Point, 10000)
+	points := make([]jarvis.Point, 100)
 	for i := 0; i < len(points); i++ {
 		points[i] = jarvis.NewPoint()
 	}
@@ -43,7 +43,7 @@ func main() {
 
 	for _, point := range points {
 		inp := jarvis.Vector{1, point.X, point.Y}
-		if p.Guess(inp, jarvis.ReLU) != point.Label {
+		if p.Guess(inp, nil) != point.Label {
 			fmt.Println("FAILED GUESS FOR", point)
 		}
 	}

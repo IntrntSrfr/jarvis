@@ -17,7 +17,7 @@ func NewPoint() Point {
 		//if p.X >= p.Y {
 		p.Label = 1
 	} else {
-		p.Label = -1
+		p.Label = 0
 	}
 	return p
 }
