@@ -2,24 +2,35 @@ package jarvis
 
 type Matrix []Vector
 
-/*
-func MatrixDot(m1 Matrix, m2 Matrix) Matrix{
+func MatrixDot(m1 Matrix, m2 Matrix) Matrix {
 
+	res := make(Matrix, len(m1))
+	for i := range res {
+		row := make(Vector, len(m2[0]))
+		for j := range row {
+			sum := 0.0
+			for k := 0; k < len(m1[i]); k++ {
+				sum += m1[i][k] * m2[k][j]
+			}
+			row[j] = sum
+		}
+		res[i] = row
+	}
+	return res
 }
-*/
 
 func MatrixAdd(m1 Matrix, m2 Matrix) Matrix {
 	res := make(Matrix, len(m1))
-	for i := range m1 {
-		res = append(res, VecAdd(m1[i], m2[i]))
+	for i := range res {
+		res[i] = VecAdd(m1[i], m2[i])
 	}
 	return res
 }
 
 func MatrixScale(m1 Matrix, scale float64) Matrix {
 	res := make(Matrix, len(m1))
-	for i := range m1 {
-		res = append(res, VecScale(m1[i], scale))
+	for i := range res {
+		res[i] = VecScale(m1[i], scale)
 	}
 	return res
 }
@@ -37,12 +48,12 @@ func MatrixEqual(m1 Matrix, m2 Matrix) bool {
 
 func MatrixTranspose(m1 Matrix) Matrix {
 	res := make(Matrix, len(m1[0]))
-	for i := range m1 {
+	for i := range res {
 		row := make(Vector, len(m1))
-		for j := range m1[i] {
+		for j := range row {
 			row[j] = m1[j][i]
 		}
-		res = append(res, row)
+		res[i] = row
 	}
 	return res
 }
@@ -50,7 +61,7 @@ func MatrixTranspose(m1 Matrix) Matrix {
 func MatrixMap(m1 Matrix, f func(float64) float64) Matrix {
 	res := make(Matrix, len(m1))
 	for i := range m1 {
-		res = append(res, VecMap(m1[i], f))
+		res[i] = VecMap(m1[i], f)
 	}
 	return res
 }
