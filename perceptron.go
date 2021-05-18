@@ -61,7 +61,7 @@ var ReLU = func(x float64) float64 {
 
 // Guess simply asks the perceptron to make a prediction
 func (p *Perceptron) Guess(inp Vector, f ActivationFunction) int {
-	if VecDot(p.Weights, inp)+p.Bias >= 0 {
+	if VecDot(p.Weights, inp) >= 0 {
 		return 1
 	} else {
 		return 0
