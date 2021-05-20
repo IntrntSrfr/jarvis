@@ -16,7 +16,8 @@ func NewPerceptron(size int, lr float64) *Perceptron {
 
 	// do size + 1 do account for the bias weight
 	return &Perceptron{
-		Weights: make(Vector, size+1),
+		//Weights: make(Vector, size+1),
+		Weights: NewRandomVector(size + 1),
 		Lr:      lr,
 		Bias:    1,
 	}
@@ -28,11 +29,41 @@ func (p *Perceptron) String() string {
 }
 
 // Train trains the perceptron using an input and a target value for said input
-func (p *Perceptron) Train(inp Vector, target int) int {
-	guess := p.Guess(inp, nil)
+func (p *Perceptron) Train(inp Vector, target float64, f ActivationFunction) float64 {
+	guess := p.Guess(inp, f)
 	miss := target - guess
-	p.Weights = VecAdd(p.Weights, VecScale(inp, float64(miss)*p.Lr))
+	p.Weights = VecAdd(p.Weights, VecScale(inp, miss*p.Lr))
 	return guess
+}
+
+func (p *Perceptron) TrainUntilSatisfied(points []Point, f ActivationFunction) int {
+
+	epochs := 0
+	for {
+		failed := false
+		for _, point := range points {
+			input := Vector{1, point.X, point.Y}
+			lol := p.Train(input, point.Label, f)
+			if lol != point.Label {
+				failed = true
+			}
+		}
+		if !failed {
+			break
+		}
+		epochs++
+	}
+
+	return epochs
+}
+
+func (p *Perceptron) TrainEpochs(points []Point, epochs int, f ActivationFunction) {
+	for i := 0; i < epochs; i++ {
+		for _, point := range points {
+			input := Vector{1, point.X, point.Y}
+			p.Train(input, point.Label, f)
+		}
+	}
 }
 
 type ActivationFunction func(x float64) float64
@@ -60,10 +91,14 @@ var ReLU = func(x float64) float64 {
 }
 
 // Guess simply asks the perceptron to make a prediction
-func (p *Perceptron) Guess(inp Vector, f ActivationFunction) int {
-	if VecDot(p.Weights, inp) >= 0 {
-		return 1
-	} else {
-		return 0
-	}
+func (p *Perceptron) Guess(inp Vector, f ActivationFunction) float64 {
+	//return Sigmoid(VecDot(p.Weights, inp))
+	//return HeavisideStep(VecDot(p.Weights, inp))
+	return f(VecDot(p.Weights, inp))
+	/*
+		if VecDot(p.Weights, inp) >= 0 {
+			return 1
+		} else {
+			return 0
+		}*/
 }
