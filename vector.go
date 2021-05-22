@@ -27,6 +27,18 @@ func VecAdd(v1 Vector, v2 Vector) Vector {
 	return res
 }
 
+// VecSub subtracts one Vector from another
+func VecSub(v1 Vector, v2 Vector) Vector {
+	if len(v1) != len(v2) {
+		panic("vector lengths do not match")
+	}
+	res := make(Vector, len(v1))
+	for i := 0; i < len(v1); i++ {
+		res[i] = v1[i] - v2[i]
+	}
+	return res
+}
+
 // VecEqual checks if two Vector objects contain the same values
 func VecEqual(v1 Vector, v2 Vector) bool {
 	if len(v1) != len(v2) {

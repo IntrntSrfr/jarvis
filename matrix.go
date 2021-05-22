@@ -1,6 +1,38 @@
 package jarvis
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Matrix []Vector
+
+func NewMatrix(m, n int) Matrix {
+	rows := make(Matrix, m)
+	for i := range rows {
+		rows[i] = make(Vector, n)
+	}
+	return rows
+}
+
+func NewRandomMatrix(m, n int) Matrix {
+	rows := make(Matrix, m)
+	for i := range rows {
+		rows[i] = NewRandomVector(n)
+	}
+	return rows
+}
+
+func (m Matrix) String() string {
+	b := strings.Builder{}
+	for i := range m {
+		for v := range m[i] {
+			b.WriteString(fmt.Sprintf("%v | ", m[i][v]))
+		}
+		b.WriteString("\n")
+	}
+	return b.String()
+}
 
 func MatrixDot(m1 Matrix, m2 Matrix) Matrix {
 
@@ -23,6 +55,13 @@ func MatrixAdd(m1 Matrix, m2 Matrix) Matrix {
 	res := make(Matrix, len(m1))
 	for i := range res {
 		res[i] = VecAdd(m1[i], m2[i])
+	}
+	return res
+}
+func MatrixSub(m1 Matrix, m2 Matrix) Matrix {
+	res := make(Matrix, len(m1))
+	for i := range res {
+		res[i] = VecSub(m1[i], m2[i])
 	}
 	return res
 }
