@@ -39,6 +39,19 @@ func TestMatrixAdd(t *testing.T) {
 	}
 }
 
+func TestMatrixSub(t *testing.T) {
+
+	m1 := Matrix{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}}
+	m2 := Matrix{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}}
+
+	got := MatrixSub(m1, m2)
+	expected := Matrix{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
+
+	if !MatrixEqual(got, expected) {
+		t.Errorf("MatrixSub(m1, m2): %v; expected: %v", got, expected)
+	}
+}
+
 func TestMatrixMap(t *testing.T) {
 	m1 := Matrix{{1, 2}, {2, 4}}
 	f := func(i float64) float64 {

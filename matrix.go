@@ -58,10 +58,15 @@ func MatrixAdd(m1 Matrix, m2 Matrix) Matrix {
 	}
 	return res
 }
+
 func MatrixSub(m1 Matrix, m2 Matrix) Matrix {
+	return MatrixAdd(m1, MatrixScale(m2, -1))
+}
+
+func MatrixMultiply(m1 Matrix, m2 Matrix) Matrix {
 	res := make(Matrix, len(m1))
 	for i := range res {
-		res[i] = VecSub(m1[i], m2[i])
+		res[i] = VecMultiply(m1[i], m2[i])
 	}
 	return res
 }
