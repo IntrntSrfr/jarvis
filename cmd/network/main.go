@@ -10,7 +10,7 @@ func main() {
 
 	//targets := jarvis.Matrix{{3}, {5}}
 
-	inp := jarvis.Matrix{{0.5}, {0.10}}
+	inp := jarvis.Matrix{{0.5}, {0.10}, {1}}
 	target := jarvis.Matrix{{0}, {1}}
 	n.Train(inp, target)
 	for i := 0; i < 1000; i++ {

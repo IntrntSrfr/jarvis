@@ -22,8 +22,8 @@ func NewNetwork(in, hid, out int, LR float64) *Network {
 		LR:     LR,
 		//WeightsIH: NewMatrix(hid, in),
 		//WeightsHO: NewMatrix(out, hid),
-		WeightsIH: NewRandomMatrix(hid, in),
-		WeightsHO: NewRandomMatrix(out, hid),
+		WeightsIH: NewRandomMatrix(hid+1, in+1),
+		WeightsHO: NewRandomMatrix(out, hid+1),
 	}
 }
 
