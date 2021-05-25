@@ -1,10 +1,5 @@
 package jarvis
 
-import (
-	"fmt"
-	"strings"
-)
-
 type Matrix []Vector
 
 func NewMatrix(m, n int) Matrix {
@@ -21,17 +16,6 @@ func NewRandomMatrix(m, n int) Matrix {
 		rows[i] = NewRandomVector(n)
 	}
 	return rows
-}
-
-func (m Matrix) String() string {
-	b := strings.Builder{}
-	for i := range m {
-		for v := range m[i] {
-			b.WriteString(fmt.Sprintf("%v | ", m[i][v]))
-		}
-		b.WriteString("\n")
-	}
-	return b.String()
 }
 
 func MatrixDot(m1 Matrix, m2 Matrix) Matrix {
