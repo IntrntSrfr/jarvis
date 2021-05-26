@@ -16,12 +16,10 @@ type Network struct {
 
 func NewNetwork(in, hid, out int, LR float64) *Network {
 	return &Network{
-		Inputs: in,
-		Hidden: hid,
-		Output: out,
-		LR:     LR,
-		//WeightsIH: NewMatrix(hid, in),
-		//WeightsHO: NewMatrix(out, hid),
+		Inputs:    in,
+		Hidden:    hid,
+		Output:    out,
+		LR:        LR,
 		WeightsIH: NewRandomMatrix(hid+1, in+1),
 		WeightsHO: NewRandomMatrix(out, hid+1),
 	}
