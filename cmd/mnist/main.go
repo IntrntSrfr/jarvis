@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"github.com/intrntsrfr/jarvis"
 	"math/rand"
@@ -16,7 +17,7 @@ func init() {
 }
 
 func main() {
-	f, err := os.Open("./train.csv")
+	f, err := os.Open("./datasets/train_100.csv")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -55,15 +56,26 @@ func main() {
 
 	fmt.Println(len(dataset))
 
-	n := jarvis.NewNetwork(784, 200, 10, 0.0001)
+	n := jarvis.NewNetwork(784, 256, 10, 0.01)
 
 	for i := 0; ; i++ {
+		start := time.Now()
 		t := 0.0
 		for _, d := range dataset {
 			t += n.Train(d.data, d.labels)
 		}
-		fmt.Println(fmt.Sprintf("> EPOCH %v - TOTAL ERROR: %v - TOTAL AVERAGE ERROR: %v", i, t, t/float64(len(dataset))))
+		fmt.Println(fmt.Sprintf("> EPOCH %v - TOTAL ERROR: %v - TOTAL AVERAGE ERROR: %v - TIME TAKEN: %v", i, t, t/float64(len(dataset)), time.Since(start)))
 	}
+}
+
+func saveWeights(n *jarvis.Network) {
+
+	f, _ := os.Create("./weights.wgt")
+	defer f.Close()
+
+	d, _ := json.MarshalIndent(n, "", "\t")
+
+	os.WriteFile("./network.wgt", d, 0644)
 }
 
 type data struct {

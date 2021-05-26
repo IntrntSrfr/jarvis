@@ -36,15 +36,16 @@ func main() {
 	n := jarvis.NewNetwork(2, 4, 1, .1)
 
 	for i := 0; ; i++ {
+		start := time.Now()
 		t := 0.0
 		for _, d := range dataset {
 			t += n.Train(d.data, d.labels)
 		}
 		if i%10 == 0 {
-			fmt.Println(fmt.Sprintf("> EPOCH %v - TOTAL ERROR: %v - TOTAL AVERAGE ERROR: %v", i, t, t/float64(len(dataset))))
+			fmt.Println(fmt.Sprintf("> EPOCH %v - TOTAL ERROR: %v - TOTAL AVERAGE ERROR: %v - TIME TAKEN: %v", i, t, t/float64(len(dataset)), time.Since(start)))
 		}
-		if t/float64(len(dataset)) < 0.00001 {
-			fmt.Println(fmt.Sprintf("> EPOCH %v - TOTAL ERROR: %v - TOTAL AVERAGE ERROR: %v", i, t, t/float64(len(dataset))))
+		if t/float64(len(dataset)) < 0.0001 {
+			fmt.Println(fmt.Sprintf("> EPOCH %v - TOTAL ERROR: %v - TOTAL AVERAGE ERROR: %v - TIME TAKEN: %v", i, t, t/float64(len(dataset)), time.Since(start)))
 			break
 		}
 	}
