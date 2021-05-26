@@ -14,26 +14,26 @@ func init() {
 func main() {
 	dataset := []data{
 		{
-			labels: jarvis.Matrix{{1}, {0}},
+			labels: jarvis.Matrix{{0}},
 			data:   jarvis.Matrix{{0}, {0}},
 		},
 		{
-			labels: jarvis.Matrix{{0}, {1}},
+			labels: jarvis.Matrix{{1}},
 			data:   jarvis.Matrix{{0}, {1}},
 		},
 		{
-			labels: jarvis.Matrix{{0}, {1}},
+			labels: jarvis.Matrix{{1}},
 			data:   jarvis.Matrix{{1}, {0}},
 		},
 		{
-			labels: jarvis.Matrix{{1}, {0}},
+			labels: jarvis.Matrix{{0}},
 			data:   jarvis.Matrix{{1}, {1}},
 		},
 	}
 
 	fmt.Println(len(dataset))
 
-	n := jarvis.NewNetwork(2, 4, 2, .1)
+	n := jarvis.NewNetwork(2, 4, 1, .1)
 
 	for i := 0; i < 10000; i++ {
 		t := 0.0
@@ -45,10 +45,10 @@ func main() {
 		}
 	}
 
-	fmt.Println(fmt.Sprintf("(0, 0) GUESS: %v; WANT [1, 0]", n.Guess(jarvis.Matrix{{0}, {0}})))
-	fmt.Println(fmt.Sprintf("(0, 1) GUESS: %v; WANT [0, 1]", n.Guess(jarvis.Matrix{{0}, {1}})))
-	fmt.Println(fmt.Sprintf("(1, 0) GUESS: %v; WANT [0, 1]", n.Guess(jarvis.Matrix{{1}, {0}})))
-	fmt.Println(fmt.Sprintf("(1, 1) GUESS: %v; WANT [1, 0]", n.Guess(jarvis.Matrix{{1}, {1}})))
+	fmt.Println(fmt.Sprintf("(0, 0) GUESS: %v; WANT 0", n.Guess(jarvis.Matrix{{0}, {0}})[0][0]))
+	fmt.Println(fmt.Sprintf("(0, 1) GUESS: %v; WANT 1", n.Guess(jarvis.Matrix{{0}, {1}})[0][0]))
+	fmt.Println(fmt.Sprintf("(1, 0) GUESS: %v; WANT 1", n.Guess(jarvis.Matrix{{1}, {0}})[0][0]))
+	fmt.Println(fmt.Sprintf("(1, 1) GUESS: %v; WANT 0", n.Guess(jarvis.Matrix{{1}, {1}})[0][0]))
 }
 
 type data struct {
