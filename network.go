@@ -34,6 +34,9 @@ func (n *Network) String() string {
 // Guess takes an input and feeds it through the network
 func (n *Network) Guess(inp Matrix) Matrix {
 	// Hidden result: result from IH x inp
+
+	inp = append(inp, Vector{1})
+
 	hiddenResult := MatrixDot(n.WeightsIH, inp)
 	hiddenActivations := MatrixMap(hiddenResult, Sigmoid)
 	//fmt.Println("HIDDEN RESULT:\n", hr)
@@ -47,10 +50,12 @@ func (n *Network) Guess(inp Matrix) Matrix {
 
 }
 
-func (n *Network) Train(inp, target Matrix) {
+func (n *Network) Train(inp, target Matrix) float64 {
 	// this can probably be changed so that we train a whole dataset, but for now only 1 input
 	// or we can use this method in another method to deal with a whole dataset, in that case we just need to return
 	// the mseErrors this input gives so we can inform about the average error of a dataset
+
+	inp = append(inp, Vector{1})
 
 	hiddenResult := MatrixDot(n.WeightsIH, inp)
 	hiddenActivations := MatrixMap(hiddenResult, Sigmoid)
@@ -69,7 +74,7 @@ func (n *Network) Train(inp, target Matrix) {
 		mseErrors[i] = Vector{outputError}
 		//fmt.Println(fmt.Sprintf("error for output %v: %v", i, outputError))
 	}
-	fmt.Println("total error", totalError)
+	//fmt.Println("total error", totalError)
 	//fmt.Println(fmt.Sprintf("HIDDEN OUTPUTS: \n\t%v", hiddenActivations))
 	//fmt.Println(fmt.Sprintf("FINAL OUTPUTS: \n\t%v", outputActivations))
 	//fmt.Println(fmt.Sprintf("FINAL MSE ERRORS: \n\t%v", mseErrors))
@@ -96,6 +101,7 @@ func (n *Network) Train(inp, target Matrix) {
 
 	n.WeightsIH = MatrixSub(n.WeightsIH, updatedIH)
 	n.WeightsHO = MatrixSub(n.WeightsHO, updatedHO)
+	return totalError
 }
 
 func subtractMatrix(m Matrix) Matrix {
