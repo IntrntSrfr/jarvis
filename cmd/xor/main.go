@@ -33,7 +33,7 @@ func main() {
 
 	fmt.Println(len(dataset))
 
-	n := jarvis.NewNetwork(2, 4, 1, .1)
+	n := jarvis.NewNetwork(2, 4, 1, .01)
 
 	for i := 0; ; i++ {
 		start := time.Now()
@@ -44,7 +44,7 @@ func main() {
 		if i%10 == 0 {
 			fmt.Println(fmt.Sprintf("> EPOCH %v - TOTAL ERROR: %v - TOTAL AVERAGE ERROR: %v - TIME TAKEN: %v", i, t, t/float64(len(dataset)), time.Since(start)))
 		}
-		if t/float64(len(dataset)) < 0.0001 {
+		if t/float64(len(dataset)) < 0.00001 {
 			fmt.Println(fmt.Sprintf("> EPOCH %v - TOTAL ERROR: %v - TOTAL AVERAGE ERROR: %v - TIME TAKEN: %v", i, t, t/float64(len(dataset)), time.Since(start)))
 			break
 		}
