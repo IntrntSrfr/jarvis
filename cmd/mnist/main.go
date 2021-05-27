@@ -53,7 +53,7 @@ func main() {
 }
 
 func guess(n *jarvis.Network) {
-	f, err := os.Open("./datasets/test_10.csv")
+	f, err := os.Open("./datasets/test.csv")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -63,31 +63,32 @@ func guess(n *jarvis.Network) {
 	var dataset []data
 
 	scanner := bufio.NewScanner(f)
+	scanner.Scan()
 	for scanner.Scan() {
 		t := scanner.Text()
 		splits := strings.Split(t, ",")
-
-		labels := make([]float64, 10)
-		hot, _ := strconv.Atoi(splits[0])
-		labels[hot] = 1.0
-
+		/*
+			labels := make([]float64, 10)
+			hot, _ := strconv.Atoi(splits[0])
+			labels[hot] = 1.0
+		*/
 		d := make([]float64, 784)
 		for i := range d {
-			p, _ := strconv.ParseFloat(splits[i+1], 64)
+			p, _ := strconv.ParseFloat(splits[i], 64)
 			d[i] = p / 255
 		}
-
-		tf := make(jarvis.Matrix, len(labels))
-		for l := range labels {
-			tf[l] = jarvis.Vector{labels[l]}
-		}
-
+		/*
+			tf := make(jarvis.Matrix, len(labels))
+			for l := range labels {
+				tf[l] = jarvis.Vector{labels[l]}
+			}
+		*/
 		ds := make(jarvis.Matrix, len(d))
 		for da := range d {
 			ds[da] = jarvis.Vector{d[da]}
 		}
 
-		dataset = append(dataset, data{tf, ds, hot})
+		dataset = append(dataset, data{nil, ds, 0})
 	}
 
 	right := 0.0
@@ -110,12 +111,14 @@ func guess(n *jarvis.Network) {
 		//fmt.Println()
 
 		lol = append(lol, largest)
-
-		if largest == d.label {
-			right++
-		}
+		/*
+			if largest == d.label {
+				right++
+			}*/
 	}
 	fmt.Println("GUESSES:", right/float64(len(dataset)))
+
+	fmt.Println(len(lol))
 
 	trollface, _ := os.Create("./guesses.csv")
 	trollface.WriteString("ImageID,Label")
@@ -138,6 +141,7 @@ func train(n *jarvis.Network, epochs int, totalErr, avgErr float64) {
 	var dataset []data
 
 	scanner := bufio.NewScanner(f)
+	scanner.Scan()
 	for scanner.Scan() {
 		t := scanner.Text()
 		splits := strings.Split(t, ",")
