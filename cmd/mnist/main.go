@@ -19,7 +19,7 @@ func init() {
 func main() {
 
 	var ans int
-	n := jarvis.NewNetwork(784, 256, 10, 0.1)
+	n := jarvis.NewNetwork(784, 256, 10, 0.01)
 
 	for {
 		fmt.Println("1. TRAIN\n2. GUESS\n3. LOAD\n4. SAVE\n5. EXIT")
@@ -28,7 +28,7 @@ func main() {
 			fmt.Println("select training criteria:\n1. epochs\n2. total error\n3. average error")
 			fmt.Scan(&ans)
 			if ans == 1 {
-				train(n, 100, 0, 0)
+				train(n, 50, 0, 0)
 				fmt.Println(1, 1)
 			} else if ans == 2 {
 				train(n, 0, 20, 0)
@@ -41,6 +41,7 @@ func main() {
 			guess(n)
 			fmt.Println(2)
 		} else if ans == 3 {
+			loadWeight(n)
 			fmt.Println(3)
 		} else if ans == 4 {
 			saveWeights(n)
@@ -73,7 +74,7 @@ func guess(n *jarvis.Network) {
 		d := make([]float64, 784)
 		for i := range d {
 			p, _ := strconv.ParseFloat(splits[i+1], 64)
-			d[i] = p
+			d[i] = p / 255
 		}
 
 		tf := make(jarvis.Matrix, len(labels))
@@ -91,9 +92,10 @@ func guess(n *jarvis.Network) {
 
 	right := 0.0
 
+	var lol []int
 	for _, d := range dataset {
 		g := n.Guess(d.data)
-		fmt.Println(fmt.Sprintf("GUESS: %v\nGOT: %v", d.labels, g))
+		//fmt.Println(fmt.Sprintf("GUESS: %v\nGOT: %v", d.labels, g))
 
 		largest := -1
 		val := 0.0
@@ -103,21 +105,30 @@ func guess(n *jarvis.Network) {
 				largest = v
 			}
 		}
-		fmt.Println("GUESSED: ", largest)
-		fmt.Println("WANTED", d.label)
-		fmt.Println()
+		//fmt.Println("GUESSED: ", largest)
+		//fmt.Println("WANTED", d.label)
+		//fmt.Println()
+
+		lol = append(lol, largest)
 
 		if largest == d.label {
 			right++
 		}
 	}
-
 	fmt.Println("GUESSES:", right/float64(len(dataset)))
+
+	trollface, _ := os.Create("./guesses.csv")
+	trollface.WriteString("ImageID,Label")
+	for i := range lol {
+		trollface.WriteString(fmt.Sprintf("\n%v,%v", i+1, lol[i]))
+	}
+	trollface.Close()
+
 }
 
 func train(n *jarvis.Network, epochs int, totalErr, avgErr float64) {
 	fmt.Println("lol")
-	f, err := os.Open("./datasets/train_large.csv")
+	f, err := os.Open("./datasets/train.csv")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -138,7 +149,7 @@ func train(n *jarvis.Network, epochs int, totalErr, avgErr float64) {
 		d := make([]float64, 784)
 		for i := range d {
 			p, _ := strconv.ParseFloat(splits[i+1], 64)
-			d[i] = p
+			d[i] = p / 255
 		}
 
 		tf := make(jarvis.Matrix, len(labels))
@@ -176,6 +187,12 @@ func train(n *jarvis.Network, epochs int, totalErr, avgErr float64) {
 func saveWeights(n *jarvis.Network) {
 	d, _ := json.MarshalIndent(n, "", "\t")
 	os.WriteFile("./network.wgt", d, 0644)
+}
+
+func loadWeight(n *jarvis.Network) {
+	d, _ := os.ReadFile("./network.wgt")
+	//lol := jarvis.Network{}
+	json.Unmarshal(d, n)
 }
 
 type data struct {
