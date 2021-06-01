@@ -19,7 +19,7 @@ func init() {
 func main() {
 
 	var ans int
-	n := jarvis.NewNetwork(784, 256, 10, 0.01)
+	n := jarvis.NewNetwork(784, 512, 10, 0.01)
 
 	for {
 		fmt.Println("1. TRAIN\n2. GUESS\n3. LOAD\n4. SAVE\n5. EXIT")
@@ -53,7 +53,7 @@ func main() {
 }
 
 func guess(n *jarvis.Network) {
-	f, err := os.Open("./datasets/test.csv")
+	f, err := os.Open("./datasets/train_100.csv")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -67,11 +67,11 @@ func guess(n *jarvis.Network) {
 	for scanner.Scan() {
 		t := scanner.Text()
 		splits := strings.Split(t, ",")
-		/*
-			labels := make([]float64, 10)
-			hot, _ := strconv.Atoi(splits[0])
-			labels[hot] = 1.0
-		*/
+
+		labels := make([]float64, 10)
+		hot, _ := strconv.Atoi(splits[0])
+		labels[hot] = 1.0
+
 		d := make([]float64, 784)
 		for i := range d {
 			p, _ := strconv.ParseFloat(splits[i], 64)
@@ -88,7 +88,7 @@ func guess(n *jarvis.Network) {
 			ds[da] = jarvis.Vector{d[da]}
 		}
 
-		dataset = append(dataset, data{nil, ds, 0})
+		dataset = append(dataset, data{nil, ds, hot})
 	}
 
 	right := 0.0
@@ -101,36 +101,31 @@ func guess(n *jarvis.Network) {
 		largest := -1
 		val := 0.0
 		for v := range g {
-			if g[v][0] > val {
-				val = g[v][0]
+			if g[v] > val {
+				val = g[v]
 				largest = v
 			}
 		}
-		//fmt.Println("GUESSED: ", largest)
-		//fmt.Println("WANTED", d.label)
-		//fmt.Println()
-
 		lol = append(lol, largest)
-		/*
-			if largest == d.label {
-				right++
-			}*/
+		if largest == d.label {
+			right++
+		}
 	}
 	fmt.Println("GUESSES:", right/float64(len(dataset)))
 
 	fmt.Println(len(lol))
-
-	trollface, _ := os.Create("./guesses.csv")
-	trollface.WriteString("ImageID,Label")
-	for i := range lol {
-		trollface.WriteString(fmt.Sprintf("\n%v,%v", i+1, lol[i]))
-	}
-	trollface.Close()
-
+	/*
+		trollface, _ := os.Create("./guesses.csv")
+		trollface.WriteString("ImageID,Label")
+		for i := range lol {
+			trollface.WriteString(fmt.Sprintf("\n%v,%v", i+1, lol[i]))
+		}
+		trollface.Close()
+	*/
 }
 
 func train(n *jarvis.Network, epochs int, totalErr, avgErr float64) {
-	fmt.Println("lol")
+	fmt.Println("STARTING TRAINING")
 	f, err := os.Open("./datasets/train.csv")
 	if err != nil {
 		fmt.Println(err)
@@ -195,7 +190,6 @@ func saveWeights(n *jarvis.Network) {
 
 func loadWeight(n *jarvis.Network) {
 	d, _ := os.ReadFile("./network.wgt")
-	//lol := jarvis.Network{}
 	json.Unmarshal(d, n)
 }
 
