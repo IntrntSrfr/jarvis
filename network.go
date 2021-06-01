@@ -7,9 +7,11 @@ import (
 
 type Network struct {
 	Inputs    int
-	Hidden    int
+	Hidden1   int
+	Hidden2   int
 	Output    int
 	WeightsIH Matrix
+	WeightsHH Matrix
 	WeightsHO Matrix
 	LR        float64
 }
@@ -17,35 +19,34 @@ type Network struct {
 func NewNetwork(in, hid, out int, LR float64) *Network {
 	return &Network{
 		Inputs:    in,
-		Hidden:    hid,
+		Hidden1:   hid,
+		Hidden2:   hid,
 		Output:    out,
 		LR:        LR,
 		WeightsIH: NewRandomMatrix(hid+1, in+1),
+		WeightsHH: NewRandomMatrix(hid+1, hid+1),
 		WeightsHO: NewRandomMatrix(out, hid+1),
 	}
 }
 
 func (n *Network) String() string {
-	return fmt.Sprintf("NETWORK - inputs: %v, hidden: %v, outputs: %v, lr: %v\nIH Weights: \n%v\nHO Weights: \n%v", n.Inputs, n.Hidden, n.Output, n.LR, n.WeightsIH, n.WeightsHO)
+	return fmt.Sprintf("NETWORK - inputs: %v, hidden: %v, outputs: %v, lr: %v\nIH Weights: \n%v\nHO Weights: \n%v", n.Inputs, n.Hidden1, n.Output, n.LR, n.WeightsIH, n.WeightsHO)
 }
 
 // Guess takes an input and feeds it through the network
-func (n *Network) Guess(inp Matrix) Matrix {
-	// Hidden result: result from IH x inp
-
+func (n *Network) Guess(inp Matrix) []float64 {
 	inp = append(inp, Vector{1})
 
-	hiddenResult := MatrixDot(n.WeightsIH, inp)
-	hiddenActivations := MatrixMap(hiddenResult, Sigmoid)
-	//fmt.Println("HIDDEN RESULT:\n", hr)
+	hidden1Result := MatrixDot(n.WeightsIH, inp)
+	hidden1Activations := MatrixMap(hidden1Result, Sigmoid)
 
-	// Output result: result from HO x hr
-	outputResult := MatrixDot(n.WeightsHO, hiddenActivations)
+	hidden2Result := MatrixDot(n.WeightsHH, hidden1Activations)
+	hidden2Activations := MatrixMap(hidden2Result, Sigmoid)
+
+	outputResult := MatrixDot(n.WeightsHO, hidden2Activations)
 	outputActivations := MatrixMap(outputResult, Sigmoid)
-	//fmt.Println("OUTPUT RESULT:\n", or)
 
-	return outputActivations
-
+	return MatrixTranspose(outputActivations)[0]
 }
 
 func (n *Network) Train(inp, target Matrix) float64 {
@@ -55,49 +56,37 @@ func (n *Network) Train(inp, target Matrix) float64 {
 
 	inp = append(inp, Vector{1})
 
-	hiddenResult := MatrixDot(n.WeightsIH, inp)
-	hiddenActivations := MatrixMap(hiddenResult, Sigmoid)
-	//fmt.Println("HIDDEN RESULT:\n", hr)
+	hidden1Result := MatrixDot(n.WeightsIH, inp)
+	hidden1Activations := MatrixMap(hidden1Result, Sigmoid)
 
-	// Output result: result from HO x hr
-	outputResult := MatrixDot(n.WeightsHO, hiddenActivations)
+	hidden2Result := MatrixDot(n.WeightsHH, hidden1Activations)
+	hidden2Activations := MatrixMap(hidden2Result, Sigmoid)
+
+	outputResult := MatrixDot(n.WeightsHO, hidden2Activations)
 	outputActivations := MatrixMap(outputResult, Sigmoid)
-
-	mseErrors := make(Matrix, n.Output)
 
 	totalError := 0.0
 	for i := range outputActivations {
 		outputError := 0.5 * math.Pow(target[i][0]-outputActivations[i][0], 2)
 		totalError += outputError
-		mseErrors[i] = Vector{outputError}
-		//fmt.Println(fmt.Sprintf("error for output %v: %v", i, outputError))
 	}
-	//fmt.Println("total error", totalError)
-	//fmt.Println(fmt.Sprintf("HIDDEN OUTPUTS: \n\t%v", hiddenActivations))
-	//fmt.Println(fmt.Sprintf("FINAL OUTPUTS: \n\t%v", outputActivations))
-	//fmt.Println(fmt.Sprintf("FINAL MSE ERRORS: \n\t%v", mseErrors))
 
 	errors := MatrixSub(target, outputActivations)
 	errors = MatrixScale(errors, -1)
-	//fmt.Println(errors)
 
-	finalSubtracted := subtractMatrix(outputActivations)
-	hiddenSubtracted := subtractMatrix(hiddenActivations)
+	outputSubtracted := subtractMatrix(outputActivations)
+	hidden2Subtracted := subtractMatrix(hidden2Activations)
+	hidden1Subtracted := subtractMatrix(hidden1Activations)
 
-	//fmt.Println(fmt.Sprintf("1 - FINAL OUTPUTS: \n\t%v", finalSubtracted))
+	hidden2Errors := MatrixDot(MatrixTranspose(n.WeightsHO), errors)
+	hidden1Errors := MatrixDot(MatrixTranspose(n.WeightsHH), hidden2Errors)
 
-	hiddenErrors := MatrixDot(MatrixTranspose(n.WeightsHO), errors)
-
-	updatedHO := MatrixScale(MatrixDot(MatrixMultiply(errors, MatrixMultiply(outputActivations, finalSubtracted)), MatrixTranspose(hiddenActivations)), n.LR)
-	updatedIH := MatrixScale(MatrixDot(MatrixMultiply(hiddenErrors, MatrixMultiply(hiddenActivations, hiddenSubtracted)), MatrixTranspose(inp)), n.LR)
-
-	//fmt.Println(fmt.Sprintf("IH WEIGHTS:\n\t%v", n.WeightsIH))
-	//fmt.Println(fmt.Sprintf("HO WEIGHTS:\n\t%v", n.WeightsHO))
-
-	//fmt.Println(fmt.Sprintf("CHANGE IH WEIGHTS:\n\t%v", updatedIH))
-	//fmt.Println(fmt.Sprintf("CHANGE HO WEIGHTS:\n\t%v", updatedHO))
+	updatedHO := MatrixScale(MatrixDot(MatrixMultiply(errors, MatrixMultiply(outputActivations, outputSubtracted)), MatrixTranspose(hidden2Activations)), n.LR)
+	updatedHH := MatrixScale(MatrixDot(MatrixMultiply(hidden2Errors, MatrixMultiply(hidden2Activations, hidden2Subtracted)), MatrixTranspose(hidden1Activations)), n.LR)
+	updatedIH := MatrixScale(MatrixDot(MatrixMultiply(hidden1Errors, MatrixMultiply(hidden1Activations, hidden1Subtracted)), MatrixTranspose(inp)), n.LR)
 
 	n.WeightsIH = MatrixSub(n.WeightsIH, updatedIH)
+	n.WeightsHH = MatrixSub(n.WeightsHH, updatedHH)
 	n.WeightsHO = MatrixSub(n.WeightsHO, updatedHO)
 	return totalError
 }
