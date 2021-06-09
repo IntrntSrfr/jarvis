@@ -22,7 +22,7 @@ func MatrixDot(m1 Matrix, m2 Matrix) Matrix {
 
 	res := make(Matrix, len(m1))
 	for i := range res {
-		row := make(Vector, len(m2[0]))
+		row := make([]float64, len(m2[0]))
 		for j := range row {
 			sum := 0.0
 			for k := 0; k < len(m1[i]); k++ {
@@ -38,7 +38,23 @@ func MatrixDot(m1 Matrix, m2 Matrix) Matrix {
 func MatrixAdd(m1 Matrix, m2 Matrix) Matrix {
 	res := make(Matrix, len(m1))
 	for i := range res {
-		res[i] = VecAdd(m1[i], m2[i])
+		row := make([]float64, len(m1[i]))
+		for j := range row {
+			row[j] = m1[i][j] + m2[i][j]
+		}
+		res[i] = row
+	}
+	return res
+}
+
+func MatrixScale(m1 Matrix, scale float64) Matrix {
+	res := make(Matrix, len(m1))
+	for i := range res {
+		row := make([]float64, len(m1[i]))
+		for j := range row {
+			row[j] = m1[i][j] * scale
+		}
+		res[i] = row
 	}
 	return res
 }
@@ -50,15 +66,11 @@ func MatrixSub(m1 Matrix, m2 Matrix) Matrix {
 func MatrixMultiply(m1 Matrix, m2 Matrix) Matrix {
 	res := make(Matrix, len(m1))
 	for i := range res {
-		res[i] = VecMultiply(m1[i], m2[i])
-	}
-	return res
-}
-
-func MatrixScale(m1 Matrix, scale float64) Matrix {
-	res := make(Matrix, len(m1))
-	for i := range res {
-		res[i] = VecScale(m1[i], scale)
+		row := make([]float64, len(m1[i]))
+		for j := range row {
+			row[j] = m1[i][j] * m2[i][j]
+		}
+		res[i] = row
 	}
 	return res
 }
@@ -77,7 +89,7 @@ func MatrixEqual(m1 Matrix, m2 Matrix) bool {
 func MatrixTranspose(m1 Matrix) Matrix {
 	res := make(Matrix, len(m1[0]))
 	for i := range res {
-		row := make(Vector, len(m1))
+		row := make([]float64, len(m1))
 		for j := range row {
 			row[j] = m1[j][i]
 		}
@@ -89,7 +101,11 @@ func MatrixTranspose(m1 Matrix) Matrix {
 func MatrixMap(m1 Matrix, f func(float64) float64) Matrix {
 	res := make(Matrix, len(m1))
 	for i := range m1 {
-		res[i] = VecMap(m1[i], f)
+		row := make([]float64, len(m1[i]))
+		for j := range m1[i] {
+			row[j] = f(m1[i][j])
+		}
+		res[i] = row
 	}
 	return res
 }
@@ -97,7 +113,9 @@ func MatrixMap(m1 Matrix, f func(float64) float64) Matrix {
 func MatrixSum(m1 Matrix) float64 {
 	sum := 0.0
 	for i := range m1 {
-		sum += VecSum(m1[i])
+		for j := range m1[i] {
+			sum += m1[i][j]
+		}
 	}
 	return sum
 }
