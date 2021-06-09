@@ -1,11 +1,13 @@
 package jarvis
 
-type Matrix []Vector
+import "math/rand"
+
+type Matrix [][]float64
 
 func NewMatrix(m, n int) Matrix {
 	rows := make(Matrix, m)
 	for i := range rows {
-		rows[i] = make(Vector, n)
+		rows[i] = make([]float64, n)
 	}
 	return rows
 }
@@ -13,7 +15,11 @@ func NewMatrix(m, n int) Matrix {
 func NewRandomMatrix(m, n int) Matrix {
 	rows := make(Matrix, m)
 	for i := range rows {
-		rows[i] = NewRandomVector(n)
+		lol := make([]float64, n)
+		for j := range lol {
+			lol[j] = rand.Float64()*(1+1) - 1
+		}
+		rows[i] = lol
 	}
 	return rows
 }
