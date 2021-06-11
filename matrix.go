@@ -12,6 +12,14 @@ func NewMatrix(m, n int) Matrix {
 	return rows
 }
 
+func NewMatrixFromArray(inp []float64) Matrix {
+	res := make(Matrix, len(inp))
+	for i := range inp {
+		res[i] = []float64{inp[i]}
+	}
+	return res
+}
+
 func NewRandomMatrix(m, n int) Matrix {
 	rows := make(Matrix, m)
 	for i := range rows {
