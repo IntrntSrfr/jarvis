@@ -64,7 +64,6 @@ func (n *Network) Guess2(inp []float64) []float64 {
 
 	var outs Matrix
 	for i := range n.Weights {
-		fmt.Println(inpM)
 		res := MatrixDot(n.Weights[i], inpM)
 		outs = MatrixMap(res, Sigmoid)
 		inpM = outs
